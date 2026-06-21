@@ -4,16 +4,21 @@ Last updated: 2026-06-21
 
 ## Purpose
 
-This repository is the backend for an "AI Quotes Platform". It is currently a starter FastAPI backend that has begun moving from a single-file app into a layered project structure.
+This repository is the backend for an "AI Quotes Platform". It is a FastAPI service that currently serves quote data from a Supabase PostgreSQL database using a layered backend structure.
 
 The app currently:
 
 - Creates a FastAPI app titled `AI Quotes Platform`.
-- Sets the API version to `1.0.0`.
-- Exposes `GET /`.
-- Returns a welcome JSON response from the root endpoint.
+- Connects to PostgreSQL through SQLAlchemy using `DATABASE_URL` from the environment.
+- Defines a `Quote` SQLAlchemy model with `id`, `q`, and `a` fields.
+- Exposes quote API routes under `/api`.
+- Returns 50 random quotes from `GET /api/quotes`.
+- Returns 1 random quote from `GET /api/today`.
+- Uses repository and service layers for quote retrieval.
+- Uses Pydantic response schemas that match the ZenQuotes-style `q` and `a` response format.
+- Includes a seed script for importing quote data from `data/quotes.json` into the database.
 
-The planned direction appears to include database support, models, schemas, repositories, services, providers, scheduler jobs, API routers, docs, and tests.
+The current project goal is to replace the ZenQuotes API dependency for the Android app with this custom backend. Future phases plan to add AI quote generation, duplicate detection, scheduled quote generation, and deployment.
 
 ## Current Project Structure
 
@@ -23,36 +28,51 @@ backend/
 +-- .gitignore
 +-- PROJECT_CONTEXT.md
 +-- requirements.txt
++-- test_connection.py
 +-- app/
+|   +-- __init__.py
 |   +-- .env
 |   +-- main.py
 |   +-- api/
+|   |   +-- quote_api.py
 |   +-- core/
 |   +-- database/
 |   |   +-- database.py
 |   +-- models/
+|   |   +-- quote.py
 |   +-- providers/
 |   +-- repositories/
+|   |   +-- quote_repository.py
 |   +-- scheduler/
 |   +-- schemas/
+|   |   +-- quote_schema.py
 |   +-- services/
+|   |   +-- quote_service.py
 |   +-- utils/
-|   +-- __pycache__/
++-- data/
+|   +-- quotes.json
 +-- docs/
++-- scripts/
+|   +-- seed_quotes.py
 +-- tests/
 +-- venv/
 ```
 
 Important notes:
 
-- `app/main.py` is still the only file with active application logic.
-- `app/database/database.py` exists but is currently empty.
-- `app/.env` exists and is currently empty; do not commit real secrets.
-- `docs/` and `tests/` exist but currently contain no tracked files.
+- `app/main.py` is the FastAPI entry point and includes the quote API router.
+- `app/database/database.py` loads environment variables, creates the SQLAlchemy engine, defines `SessionLocal`, defines `Base`, imports models, and creates tables.
+- `app/models/quote.py` defines the `quotes` table model.
+- `app/repositories/quote_repository.py` contains database query logic.
+- `app/services/quote_service.py` contains quote business/service logic.
+- `app/schemas/quote_schema.py` contains Pydantic response schemas.
+- `app/api/quote_api.py` defines the public quote endpoints.
+- `scripts/seed_quotes.py` imports seed data from `data/quotes.json`.
+- `test_connection.py` is used for database connection testing.
+- `app/.env` should contain local environment variables such as `DATABASE_URL`; do not commit real secrets.
+- `venv/` and `__pycache__/` are generated/local files and should not be committed.
+- Empty directories such as `core/`, `providers/`, `scheduler/`, `utils/`, `docs/`, and `tests/` are scaffolding for planned work.
 - `.gitignore` is present and ignores Python caches, virtual environments, `.env` files, local databases, logs, build output, IDE files, and OS files.
-
-
-
 ## Runtime And Dependencies
 
 Dependencies are now tracked in `requirements.txt`.
@@ -70,56 +90,93 @@ psycopg-binary==3.3.4
 python-dotenv==1.2.2
 ```
 
-The presence of `SQLAlchemy`, `psycopg`, and `python-dotenv` suggests upcoming PostgreSQL/database configuration work, but no database connection logic is implemented yet.
 
-## How To Run Locally
+## Architecture Decisions
 
-From the project root:
-
-```powershell
-venv\Scripts\activate
-uvicorn app.main:app --reload
-```
-
-Then open:
-
-```text
-http://127.0.0.1:8000/
-```
-
-FastAPI docs should be available at:
-
-```text
-http://127.0.0.1:8000/docs
-```
+- FastAPI chosen over Ktor.
+- Supabase chosen as PostgreSQL provider.
+- SQLAlchemy ORM.
+- Repository → Service → API architecture.
+- Response format matches ZenQuotes.
+- Database is append-only (Version 1).
+- AI pipeline will generate new quotes.
+- Duplicate detection will occur before insertion.
+- Deployment target: Oracle Cloud (planned).
+- Android app should only need a Base URL change.
 
 
-## Current Status Checkpoint
 
-The backend is still at the starter stage, but the folder architecture has been scaffolded for a larger FastAPI application.
+#### Project Architecture
 
-Implemented:
+- FastAPI project initialized.
+- Layered project structure established.
+- Virtual environment configured.
+- Git repository initialized.
+- `.gitignore` configured.
+- Dependencies managed through `requirements.txt`.
 
-- FastAPI app initialization.
-- Root health/welcome endpoint.
-- Dependency list in `requirements.txt`.
-- Git ignore rules.
-- Empty database module placeholder at `app/database/database.py`.
-- Empty folders for planned modules: `api`, `core`, `models`, `providers`, `repositories`, `scheduler`, `schemas`, `services`, and `utils`.
-- Empty root folders for `docs` and `tests`.
+#### Database
 
-Not implemented yet:
+- Supabase PostgreSQL project created.
+- Environment variables configured.
+- SQLAlchemy engine configured.
+- SQLAlchemy session factory implemented.
+- SQLAlchemy `Base` class created.
+- `Quote` model implemented.
+- `quotes` table created successfully.
+- Database connection verified.
 
-- Database engine/session setup.
-- Environment settings loader.
-- Quote models or schemas.
-- Quote CRUD endpoints.
-- AI quote generation logic.
-- Repository/service implementations.
-- API router structure.
-- Scheduler jobs.
-- Tests.
-- Deployment configuration.
+#### Backend Architecture
+
+- Repository layer implemented.
+- Service layer implemented.
+- Pydantic response schemas implemented.
+- REST API router implemented.
+
+#### API
+
+Implemented endpoints:
+
+- `GET /api/quotes`
+  - Returns 50 random quotes.
+- `GET /api/today`
+  - Returns 1 random quote.
+
+Both endpoints match the ZenQuotes API response format.
+
+#### Data
+
+- Initial quote dataset imported into PostgreSQL.
+- Backend successfully serves quotes from the database.
+
+---
+
+## Not Implemented Yet
+
+### Android Integration
+
+- Connect Android application to the custom backend.
+- Replace ZenQuotes base URL.
+
+### AI Pipeline
+
+- Gemini integration.
+- AI quote generation.
+- Quote validation.
+- Duplicate detection.
+- Automatic database insertion.
+
+### Scheduler
+
+- Scheduled quote generation.
+- Automatic database updates.
+
+### Deployment
+
+- Production hosting.
+- HTTPS configuration.
+- Production environment variables.
+- Custom domain (optional).
 
 
 ## Add Current Database Plan:
@@ -137,117 +194,111 @@ Additional columns will only be added when there is a real requirement.
 
 ## Current Version
 
-0.1.0
+0.3.1
 
 ## Current Phase
 
-Phase 2
+Phase 3
 
 ## Current Milestone
 
-**Milestone 2.1 – Connect FastAPI to Supabase PostgreSQL** ✅ **COMPLETED**
+### Milestone 3.1 – Seed the Database ✅ COMPLETED
 
-### Tasks Completed
+#### Tasks Completed
 
-* ✅ Created a Supabase project.
-* ✅ Retrieved the PostgreSQL connection string.
-* ✅ Configured the `.env` file.
-* ✅ Created the SQLAlchemy engine.
-* ✅ Created the SQLAlchemy session factory.
-* ✅ Successfully connected FastAPI to the Supabase PostgreSQL database.
+- ✅ Created a `data/` directory for seed datasets.
+- ✅ Added an initial quotes JSON dataset.
+- ✅ Created a database seeding script.
+- ✅ Imported quotes into the Supabase PostgreSQL database.
+- ✅ Verified that quotes were successfully inserted.
+- ✅ Confirmed the REST API returns data from the database.
 
-### Outcome
+#### Outcome
 
-FastAPI is successfully connected to the Supabase PostgreSQL database.
-
-The backend can now communicate with the database.
-
-No database tables have been created yet.
+The backend now contains an initial dataset of quotes and is capable of serving real data instead of empty responses.
 
 ---
 
 ## Upcoming Milestones
 
-### Milestone 2.2 – Create the Quote Model
+### Milestone 3.2 – Android App Integration
 
 Tasks
 
-* Learn what an ORM model is.
-* Create the SQLAlchemy `Base`.
-* Create the `Quote` model.
-* Map the model to the future `quotes` table.
+- Point the Android application to the new backend.
+- Replace the ZenQuotes base URL.
+- Verify Retrofit communication.
+- Display quotes served from the custom backend.
+- Ensure the existing Android code works without modifying the DTOs.
 
 ---
 
-### Milestone 2.3 – Create the Quotes Table
+### Future Milestones (Planned)
 
-Tasks
+#### Phase 4 – AI Quote Pipeline
 
-* Create the `quotes` table in PostgreSQL.
-* Verify that the table is successfully created.
-* Inspect the table using the Supabase dashboard.
-
----
-
-### Milestone 2.4 – Repository Layer
-
-Tasks
-
-* Create the `QuoteRepository`.
-* Add methods for inserting and retrieving quotes.
-* Keep all database operations inside the repository layer.
+- Integrate Google Gemini.
+- Generate new quotes automatically.
+- Validate AI responses.
+- Remove duplicate quotes.
+- Store validated quotes in PostgreSQL.
 
 ---
 
-### Milestone 2.5 – Service Layer
+#### Phase 5 – Scheduler
 
-Tasks
-
-* Create the `QuoteService`.
-* Move business logic out of the API layer.
-* Use the repository to access the database.
+- Automatically run the AI pipeline.
+- Generate new quotes at scheduled intervals.
+- Continuously grow the quote database.
 
 ---
 
-### Milestone 2.6 – REST API
+#### Phase 6 – Deployment
 
-Tasks
-
-* Create `GET /quotes`.
-* Return 50 random quotes.
-* Match the ZenQuotes API response format.
-
-Example Response
-
-```json
-[
-  {
-    "q": "Showing off is the fool's idea of glory.",
-    "a": "Bruce Lee"
-  }
-]
-```
+- Deploy FastAPI backend.
+- Configure HTTPS.
+- Update Android production base URL.
+- Prepare production environment.
 
 ---
 
 ## Completed
 
-* FastAPI installed.
-* Virtual environment configured.
-* Root endpoint created.
-* Swagger/OpenAPI documentation available.
-* Git initialized.
-* `.gitignore` created.
-* `requirements.txt` added.
-* Initial project folder structure created.
-* SQLAlchemy installed.
-* psycopg installed.
-* python-dotenv installed.
-* Supabase project created.
-* Database connection configured.
-* SQLAlchemy engine created.
-* SQLAlchemy session factory created.
-* Successfully connected FastAPI to Supabase PostgreSQL.
+### Phase 1
+
+- ✅ FastAPI installed.
+- ✅ Virtual environment configured.
+- ✅ Root endpoint created.
+- ✅ Swagger/OpenAPI documentation enabled.
+- ✅ Git initialized.
+- ✅ `.gitignore` configured.
+- ✅ `requirements.txt` created.
+- ✅ Initial project architecture created.
+
+### Phase 2
+
+- ✅ Connected FastAPI to Supabase PostgreSQL.
+- ✅ Configured environment variables.
+- ✅ SQLAlchemy engine created.
+- ✅ SQLAlchemy session factory created.
+- ✅ Created SQLAlchemy Base.
+- ✅ Created the `Quote` model.
+- ✅ Created the `quotes` table.
+- ✅ Implemented the Repository layer.
+- ✅ Implemented the Service layer.
+- ✅ Created REST API endpoints:
+  - `GET /api/quotes`
+  - `GET /api/today`
+- ✅ Matched the ZenQuotes response format.
+- ✅ Created response schemas using Pydantic.
+
+### Phase 3
+
+- ✅ Seed dataset imported.
+- ✅ Database populated with quotes.
+- ✅ Backend successfully serves quotes from PostgreSQL.
+
+
 
 
 
