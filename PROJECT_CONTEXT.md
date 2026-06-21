@@ -1,10 +1,10 @@
 ﻿# Project Context
 
-Last updated: 2026-06-20
+Last updated: 2026-06-21
 
 ## Purpose
 
-This repository is the backend for an "AI Quotes Platform". At the moment it is a minimal FastAPI application with one root endpoint.
+This repository is the backend for an "AI Quotes Platform". It is currently a starter FastAPI backend that has begun moving from a single-file app into a layered project structure.
 
 The app currently:
 
@@ -13,69 +13,64 @@ The app currently:
 - Exposes `GET /`.
 - Returns a welcome JSON response from the root endpoint.
 
+The planned direction appears to include database support, models, schemas, repositories, services, providers, scheduler jobs, API routers, docs, and tests.
+
 ## Current Project Structure
 
 ```text
 backend/
-+-- app/
-|   +-- __pycache__/
-|   +-- main.py
-+-- venv/
++-- .git/
++-- .gitignore
 +-- PROJECT_CONTEXT.md
++-- requirements.txt
++-- app/
+|   +-- .env
+|   +-- main.py
+|   +-- api/
+|   +-- core/
+|   +-- database/
+|   |   +-- database.py
+|   +-- models/
+|   +-- providers/
+|   +-- repositories/
+|   +-- scheduler/
+|   +-- schemas/
+|   +-- services/
+|   +-- utils/
+|   +-- __pycache__/
++-- docs/
++-- tests/
++-- venv/
 ```
 
 Important notes:
 
-- `app/main.py` is the only application source file currently present.
-- `venv/` is a local Python virtual environment and should usually be ignored by AI agents when reading or modifying project code.
-- There is no `requirements.txt`, `pyproject.toml`, `.env`, `.gitignore`, README, test folder, or database layer currently present.
-- This folder is not currently detected as a Git repository.
-
-## Application Entry Point
-
-File: `app/main.py`
-
-Current behavior:
-
-```python
-from fastapi import FastAPI
-
-app = FastAPI(
-    title="AI Quotes Platform",
-    version="1.0.0"
-)
+- `app/main.py` is still the only file with active application logic.
+- `app/database/database.py` exists but is currently empty.
+- `app/.env` exists and is currently empty; do not commit real secrets.
+- `docs/` and `tests/` exist but currently contain no tracked files.
+- `.gitignore` is present and ignores Python caches, virtual environments, `.env` files, local databases, logs, build output, IDE files, and OS files.
 
 
-@app.get("/")
-def root():
-    return {
-        "message": "Welcome to the AI Quotes Platform [garbled rocket emoji text]"
-    }
-```
-
-The root response text appears to contain mojibake, likely from an emoji encoding issue. If desired, replace it with plain ASCII text or a correctly encoded emoji.
 
 ## Runtime And Dependencies
 
-Observed from the local virtual environment:
+Dependencies are now tracked in `requirements.txt`.
 
-- Python virtual environment exists at `venv/`.
-- FastAPI is installed.
-- Uvicorn is installed.
-- Pydantic, Starlette, AnyIO, Click, and related dependencies are installed.
-
-Observed package versions:
+Key packages:
 
 ```text
 fastapi==0.138.0
 uvicorn==0.49.0
 pydantic==2.13.4
 starlette==1.3.1
-anyio==4.14.0
-click==8.4.1
+SQLAlchemy==2.0.51
+psycopg==3.3.4
+psycopg-binary==3.3.4
+python-dotenv==1.2.2
 ```
 
-Full dependency snapshot from `pip freeze` should be regenerated into `requirements.txt` when dependency tracking is needed.
+The presence of `SQLAlchemy`, `psycopg`, and `python-dotenv` suggests upcoming PostgreSQL/database configuration work, but no database connection logic is implemented yet.
 
 ## How To Run Locally
 
@@ -98,25 +93,162 @@ FastAPI docs should be available at:
 http://127.0.0.1:8000/docs
 ```
 
+
 ## Current Status Checkpoint
 
-The backend is at a starter stage. It has the FastAPI foundation but no quote-specific domain logic yet.
+The backend is still at the starter stage, but the folder architecture has been scaffolded for a larger FastAPI application.
 
 Implemented:
 
 - FastAPI app initialization.
 - Root health/welcome endpoint.
+- Dependency list in `requirements.txt`.
+- Git ignore rules.
+- Empty database module placeholder at `app/database/database.py`.
+- Empty folders for planned modules: `api`, `core`, `models`, `providers`, `repositories`, `scheduler`, `schemas`, `services`, and `utils`.
+- Empty root folders for `docs` and `tests`.
 
 Not implemented yet:
 
+- Database engine/session setup.
+- Environment settings loader.
 - Quote models or schemas.
 - Quote CRUD endpoints.
 - AI quote generation logic.
-- Database connection.
-- Authentication.
-- Environment configuration.
-- Dependency lock or requirements file.
+- Repository/service implementations.
+- API router structure.
+- Scheduler jobs.
 - Tests.
 - Deployment configuration.
+
+
+## Add Current Database Plan:
+
+Version 1 will keep the database intentionally simple.
+
+Quotes Table
+
+- id
+- q
+- a
+
+Additional columns will only be added when there is a real requirement.
+
+
+## Current Version
+
+0.1.0
+
+## Current Phase
+
+Phase 2
+
+## Current Milestone
+
+**Milestone 2.1 – Connect FastAPI to Supabase PostgreSQL** ✅ **COMPLETED**
+
+### Tasks Completed
+
+* ✅ Created a Supabase project.
+* ✅ Retrieved the PostgreSQL connection string.
+* ✅ Configured the `.env` file.
+* ✅ Created the SQLAlchemy engine.
+* ✅ Created the SQLAlchemy session factory.
+* ✅ Successfully connected FastAPI to the Supabase PostgreSQL database.
+
+### Outcome
+
+FastAPI is successfully connected to the Supabase PostgreSQL database.
+
+The backend can now communicate with the database.
+
+No database tables have been created yet.
+
+---
+
+## Upcoming Milestones
+
+### Milestone 2.2 – Create the Quote Model
+
+Tasks
+
+* Learn what an ORM model is.
+* Create the SQLAlchemy `Base`.
+* Create the `Quote` model.
+* Map the model to the future `quotes` table.
+
+---
+
+### Milestone 2.3 – Create the Quotes Table
+
+Tasks
+
+* Create the `quotes` table in PostgreSQL.
+* Verify that the table is successfully created.
+* Inspect the table using the Supabase dashboard.
+
+---
+
+### Milestone 2.4 – Repository Layer
+
+Tasks
+
+* Create the `QuoteRepository`.
+* Add methods for inserting and retrieving quotes.
+* Keep all database operations inside the repository layer.
+
+---
+
+### Milestone 2.5 – Service Layer
+
+Tasks
+
+* Create the `QuoteService`.
+* Move business logic out of the API layer.
+* Use the repository to access the database.
+
+---
+
+### Milestone 2.6 – REST API
+
+Tasks
+
+* Create `GET /quotes`.
+* Return 50 random quotes.
+* Match the ZenQuotes API response format.
+
+Example Response
+
+```json
+[
+  {
+    "q": "Showing off is the fool's idea of glory.",
+    "a": "Bruce Lee"
+  }
+]
+```
+
+---
+
+## Completed
+
+* FastAPI installed.
+* Virtual environment configured.
+* Root endpoint created.
+* Swagger/OpenAPI documentation available.
+* Git initialized.
+* `.gitignore` created.
+* `requirements.txt` added.
+* Initial project folder structure created.
+* SQLAlchemy installed.
+* psycopg installed.
+* python-dotenv installed.
+* Supabase project created.
+* Database connection configured.
+* SQLAlchemy engine created.
+* SQLAlchemy session factory created.
+* Successfully connected FastAPI to Supabase PostgreSQL.
+
+
 
 
