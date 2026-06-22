@@ -12,7 +12,8 @@ jobs:
     steps:
       - name: Wake Render service
         run: |
-          curl --show-error --silent --max-time 120 \
+          echo "Waking Render service..."
+          curl --fail --show-error --silent --max-time 120 \
             "${{ secrets.BACKEND_BASE_URL }}/"
 
       - name: Wait for Render warmup
@@ -20,7 +21,22 @@ jobs:
 
       - name: Generate quotes
         run: |
-          curl --fail --show-error \
+          echo "Calling protected generate endpoint..."
+
+          response_file="response.json"
+          status_code=$(curl --show-error --silent \
+            --output "$response_file" \
+            --write-out "%{http_code}" \
             --request POST \
             --header "X-Admin-Key: ${{ secrets.ADMIN_API_KEY }}" \
-            "${{ secrets.BACKEND_BASE_URL }}/api/generate?count=10"
+            "${{ secrets.BACKEND_BASE_URL }}/api/generate?count=10")
+
+          echo "HTTP status: $status_code"
+          echo "Response body:"
+          cat "$response_file"
+          echo ""
+
+          if [ "$status_code" -lt 200 ] || [ "$status_code" -ge 300 ]; then
+            echo "Generate endpoint failed. Check the response body above and Render logs."
+            exit 1
+          fi
