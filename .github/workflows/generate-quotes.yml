@@ -29,7 +29,7 @@ jobs:
             --write-out "%{http_code}" \
             --request POST \
             --header "X-Admin-Key: ${{ secrets.ADMIN_API_KEY }}" \
-            "${{ secrets.BACKEND_BASE_URL }}/api/generate?count=10")
+            "${{ secrets.BACKEND_BASE_URL }}/api/generate?count=15")
 
           echo "HTTP status: $status_code"
           echo "Response body:"
