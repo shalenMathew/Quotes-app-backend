@@ -8,3 +8,8 @@ class QuoteSchema(BaseModel):
 
 class QuoteResponse(QuoteSchema):
     model_config = ConfigDict(from_attributes=True)
+
+
+class GeneratedQuotesResponse(BaseModel):
+    generated: int
+    quotes: list[QuoteResponse]

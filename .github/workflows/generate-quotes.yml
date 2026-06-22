@@ -1,0 +1,26 @@
+name: Generate AI Quotes
+
+on:
+  schedule:
+    - cron: "30 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Wake Render service
+        run: |
+          curl --show-error --silent --max-time 120 \
+            "${{ secrets.BACKEND_BASE_URL }}/"
+
+      - name: Wait for Render warmup
+        run: sleep 100
+
+      - name: Generate quotes
+        run: |
+          curl --fail --show-error \
+            --request POST \
+            --header "X-Admin-Key: ${{ secrets.ADMIN_API_KEY }}" \
+            "${{ secrets.BACKEND_BASE_URL }}/api/generate?count=50"

@@ -1,7 +1,13 @@
+import logging
+
 from sqlalchemy import func, select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from app.core.exceptions import DatabaseSaveError
 from app.models.quote import Quote
+
+logger = logging.getLogger(__name__)
 
 
 class QuoteRepository:
@@ -10,10 +16,15 @@ class QuoteRepository:
         self.db = db
 
     def create_quote(self, quote: Quote) -> Quote:
-        self.db.add(quote)
-        self.db.commit()
-        self.db.refresh(quote)
-        return quote
+        try:
+            self.db.add(quote)
+            self.db.commit()
+            self.db.refresh(quote)
+            return quote
+        except SQLAlchemyError as exc:
+            self.db.rollback()
+            logger.exception("Database save failed for quote: %s", quote.q)
+            raise DatabaseSaveError("Database save failed while storing generated quote.") from exc
 
     def get_all_quotes(self) -> list[Quote]:
         return self.db.scalars(
@@ -31,6 +42,17 @@ class QuoteRepository:
             .order_by(func.random())
             .limit(limit)
         ).all()
+
+    def quote_exists_by_text(self, quote_text: str) -> bool:
+        normalized_quote = quote_text.strip().lower()
+
+        existing_quote_id = self.db.scalar(
+            select(Quote.id)
+            .where(func.lower(func.trim(Quote.q)) == normalized_quote)
+            .limit(1)
+        )
+
+        return existing_quote_id is not None
 
     def update_quote(self, quote: Quote) -> Quote:
         self.db.commit()
