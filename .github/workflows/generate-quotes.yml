@@ -23,4 +23,4 @@ jobs:
           curl --fail --show-error \
             --request POST \
             --header "X-Admin-Key: ${{ secrets.ADMIN_API_KEY }}" \
-            "${{ secrets.BACKEND_BASE_URL }}/api/generate?count=50"
+            "${{ secrets.BACKEND_BASE_URL }}/api/generate?count=10"
