@@ -101,8 +101,10 @@ python-dotenv==1.2.2
 - Database is append-only (Version 1).
 - AI pipeline will generate new quotes.
 - Duplicate detection will occur before insertion.
-- Deployment target: Oracle Cloud (planned).
-- Android app should only need a Base URL change.
+- Initial deployment target: Render.
+- Supabase remains the managed PostgreSQL database.
+- Android app consumes the backend through a configurable Base URL.
+- Future AI pipeline will be triggered externally (planned) rather than relying on a continuously running scheduler inside the web service.
 
 
 
@@ -153,10 +155,6 @@ Both endpoints match the ZenQuotes API response format.
 
 ## Not Implemented Yet
 
-### Android Integration
-
-- Connect Android application to the custom backend.
-- Replace ZenQuotes base URL.
 
 ### AI Pipeline
 
@@ -202,63 +200,55 @@ Phase 3
 
 ## Current Milestone
 
-### Milestone 3.1 – Seed the Database ✅ COMPLETED
+## Milestone 4.2 Status
 
-#### Tasks Completed
+Milestone 4.2 – Connect to Gemini ✅ COMPLETED
 
-- ✅ Created a `data/` directory for seed datasets.
-- ✅ Added an initial quotes JSON dataset.
-- ✅ Created a database seeding script.
-- ✅ Imported quotes into the Supabase PostgreSQL database.
-- ✅ Verified that quotes were successfully inserted.
-- ✅ Confirmed the REST API returns data from the database.
+Tasks Completed
+✅ Installed the Gemini SDK (google-genai).
+✅ Created and configured a Gemini API key.
+✅ Stored the API key in .env.
+✅ Implemented the GeminiProvider.
+✅ Successfully generated the first AI quote from the backend.
+✅ Verified end-to-end communication with the Gemini API.
 
 #### Outcome
 
-The backend now contains an initial dataset of quotes and is capable of serving real data instead of empty responses.
+
 
 ---
 
 ## Upcoming Milestones
 
-### Milestone 3.2 – Android App Integration
+### Phase 4 – AI Quote Pipeline
 
-Tasks
+Milestone 4.1
+- Integrate Google Gemini API.
 
-- Point the Android application to the new backend.
-- Replace the ZenQuotes base URL.
-- Verify Retrofit communication.
-- Display quotes served from the custom backend.
-- Ensure the existing Android code works without modifying the DTOs.
+Milestone 4.2
+- Generate AI quotes.
 
----
+Milestone 4.3
+- Validate generated quotes.
 
-### Future Milestones (Planned)
+Milestone 4.4
+- Detect and prevent duplicate quotes.
 
-#### Phase 4 – AI Quote Pipeline
-
-- Integrate Google Gemini.
-- Generate new quotes automatically.
-- Validate AI responses.
-- Remove duplicate quotes.
+Milestone 4.5
 - Store validated quotes in PostgreSQL.
 
 ---
 
-#### Phase 5 – Scheduler
+### Phase 5 – Automated Quote Generation
 
-- Automatically run the AI pipeline.
-- Generate new quotes at scheduled intervals.
+Milestone 5.1
+- Configure scheduled quote generation.
+
+Milestone 5.2
+- Trigger AI generation automatically.
+
+Milestone 5.3
 - Continuously grow the quote database.
-
----
-
-#### Phase 6 – Deployment
-
-- Deploy FastAPI backend.
-- Configure HTTPS.
-- Update Android production base URL.
-- Prepare production environment.
 
 ---
 
@@ -297,6 +287,11 @@ Tasks
 - ✅ Seed dataset imported.
 - ✅ Database populated with quotes.
 - ✅ Backend successfully serves quotes from PostgreSQL.
+- ✅ Backend deployed to Render.
+- ✅ Public HTTPS endpoint available.
+- ✅ Android application migrated from ZenQuotes to the custom backend.
+- ✅ End-to-end communication verified:
+  Android → Render → FastAPI → Supabase.
 
 
 
