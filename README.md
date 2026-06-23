@@ -4,7 +4,7 @@
 
 ## Project Overview
 
-A free and open-source quote platform that provides unlimited quotes through a public API, powered by AI and available for everyone, forever.
+`A free and open-source quote platform that provides unlimited quotes through a public API, powered by AI and available for everyone, forever.`
 
 This project was created to solve a real problem for my [Quotes APP](https://github.com/shalenMathew/Quotes-app).
 
