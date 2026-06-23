@@ -4,6 +4,8 @@
 
 ## Project Overview
 
+A free and open-source quote platform that provides unlimited quotes through a public API, powered by AI and available for everyone, forever.
+
 This project was created to solve a real problem for my [Quotes APP](https://github.com/shalenMathew/Quotes-app).
 
 The app originally relied on a third-party quotes API. That was fine in the beginning, but the API later changed significantly and moved important access behind a paywall. That made me realize that even relying on a third-party service for something as simple as quotes can become costly and risky over time.
