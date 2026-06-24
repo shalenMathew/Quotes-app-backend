@@ -1,5 +1,6 @@
 # AI Quotes Generator Backend
 
+<img width="960" height="720" alt="Adobe Express - Showreel-Grid-Mobile- remix" src="https://github.com/user-attachments/assets/12880b42-853f-48c2-acc9-b1a06fd210fa" />
 
 
 ## Project Overview
