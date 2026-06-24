@@ -42,7 +42,7 @@ def get_quotes(db: Session = Depends(get_db)):
     return service.get_random_quotes(15)
 
 
-@router.get("/today", response_model=list[QuoteResponse])
+@router.api_route("/today", methods=["GET", "HEAD"], response_model=list[QuoteResponse])
 def get_today_quote(db: Session = Depends(get_db)):
     repository = QuoteRepository(db)
     service = QuoteService(repository)
