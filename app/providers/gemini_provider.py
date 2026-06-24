@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 class GeminiProvider(AIProvider):
 
+    MODEL_NAME = "gemini-2.5-flash"
+
     def __init__(self):
         api_key = os.getenv("GEMINI_API_KEY")
 
@@ -34,7 +36,7 @@ Requirements:
 
 - You may include a mix of:
   - Original quotes created by you.
-  - Well-known public quotes from real authors when appropriate.
+  - Well-known public quotes from real authors.
 - If a quote is a real quote, provide the correct author's name.
 - If a quote is original, set the author to "Unknown".
 - Keep each quote between 8 and 25 words when possible.
@@ -56,9 +58,15 @@ Output format:
 ]
 """
 
+        logger.info(
+            "Starting Gemini generation. model=%s count=%s",
+            self.MODEL_NAME,
+            count
+        )
+
         try:
             response = self.client.models.generate_content(
-                model="gemini-3.5-flash",
+                model=self.MODEL_NAME,
                 contents=prompt,
                 config={
                     "response_mime_type": "application/json",
@@ -66,20 +74,42 @@ Output format:
                 },
             )
         except Exception as exc:
-            logger.exception("Gemini failed while generating %s quotes.", count)
+            logger.exception(
+                "Gemini generate_content failed. model=%s count=%s",
+                self.MODEL_NAME,
+                count
+            )
             raise GeminiGenerationError("Gemini failed to generate quotes.") from exc
 
         parsed_response = response.parsed
 
         if not isinstance(parsed_response, list) or not parsed_response:
-            logger.error("Invalid AI response from Gemini: %r", parsed_response)
+            logger.error(
+                "Invalid AI response from Gemini. model=%s count=%s parsed=%r",
+                self.MODEL_NAME,
+                count,
+                parsed_response
+            )
             raise InvalidAIResponseError("Gemini returned an invalid or empty response.")
 
-        invalid_items = [item for item in parsed_response if not isinstance(item, QuoteSchema)]
+        invalid_items = [
+            item for item in parsed_response
+            if not isinstance(item, QuoteSchema)
+        ]
 
         if invalid_items:
-            logger.error("Gemini response contains invalid quote items: %r", invalid_items)
+            logger.error(
+                "Gemini response contains invalid quote items. model=%s count=%s invalid_items=%r",
+                self.MODEL_NAME,
+                count,
+                invalid_items
+            )
             raise InvalidAIResponseError("Gemini response did not match the quote schema.")
 
-        logger.info("Gemini generated %s quote candidates.", len(parsed_response))
+        logger.info(
+            "Gemini generated %s quote candidates successfully. model=%s",
+            len(parsed_response),
+            self.MODEL_NAME
+        )
+
         return parsed_response
