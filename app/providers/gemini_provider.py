@@ -74,12 +74,14 @@ Output format:
                 },
             )
         except Exception as exc:
-            logger.exception(
-                "Gemini generate_content failed. model=%s count=%s",
-                self.MODEL_NAME,
-                count
-            )
-            raise GeminiGenerationError("Gemini failed to generate quotes.") from exc
+           logger.exception(
+           "Gemini generate_content failed. model=%s count=%s",
+           self.MODEL_NAME,
+           count
+        )
+        raise GeminiGenerationError(
+           f"Gemini generate_content failed for model={self.MODEL_NAME}, count={count}: {exc}"
+        ) from exc
 
         parsed_response = response.parsed
 
