@@ -3,6 +3,7 @@ name: Generate AI Quotes
 on:
   schedule:
     - cron: "30 2 * * *"
+
   workflow_dispatch:
 
 jobs:
@@ -40,3 +41,10 @@ jobs:
             echo "Generate endpoint failed. Check the response body above and Render logs."
             exit 1
           fi
+
+      - name: Upload response on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generate-response
+          path: response.json
