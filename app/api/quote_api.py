@@ -70,7 +70,7 @@ def generate_quotes(
         quotes = service.generate_and_save_quotes(count)
 
         return {
-            "final quotes after validation": len(quotes),
+            "generated": len(quotes),
             "quotes": quotes
         }
     except GeminiGenerationError as exc:

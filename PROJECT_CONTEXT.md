@@ -265,7 +265,7 @@ Response shape:
 
 ```json
 {
-  "generated": 5,
+  "generated": 5, // this is list of quotes after validation i.e after removing duplicates etc from raw gemini quotes
   "quotes": [
     {
       "q": "Quote text",
