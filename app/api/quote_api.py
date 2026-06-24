@@ -97,3 +97,9 @@ def generate_quotes(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(exc)
         ) from exc
+    except Exception as exc:
+        logger.exception("An unexpected error occurred in the generate endpoint.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected internal error occurred."
+        ) from exc
