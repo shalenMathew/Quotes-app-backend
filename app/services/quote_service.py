@@ -17,7 +17,7 @@ class QuoteService:
     def get_quote_by_id(self, quote_id: int) -> Quote | None:
         return self.repository.get_quote_by_id(quote_id)
 
-    def get_random_quotes(self, limit: int = 15) -> list[Quote]:
+    def get_random_quotes(self, limit: int = 20) -> list[Quote]:
         return self.repository.get_random_quotes(limit)
 
     def update_quote(self, quote: Quote) -> Quote:

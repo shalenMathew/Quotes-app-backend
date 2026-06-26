@@ -48,7 +48,7 @@ Health/welcome endpoint.
 ### List of Quotes:
 ### `GET /api/quotes`
 
-Returns 15 random quotes.
+Returns 20 random quotes.
 
 Response shape:
 
@@ -66,7 +66,7 @@ Response shape:
 
 Returns 1 random quote.
 
-### `POST /api/generate?count=15`
+### `POST /api/generate?count=20`
 
 Protected admin endpoint that generates, validates, deduplicates, and stores AI quotes.
 
@@ -334,7 +334,7 @@ Current behavior:
 - Can also be triggered manually with `workflow_dispatch`.
 - Calls Render root endpoint first to wake the service.
 - Waits 100 seconds for warmup.
-- Calls `POST /api/generate?count=15`.
+- Calls `POST /api/generate?count=20`.
 - Sends `X-Admin-Key` from GitHub Actions secrets.
 - Prints HTTP status and response body when generation fails.
 
