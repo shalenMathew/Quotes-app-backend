@@ -1,7 +1,7 @@
 from pathlib import Path
 import logging
 import os
-
+  # - If there is no author or you cant find one, set the author to "Unknown".
 from dotenv import load_dotenv
 from google import genai
 
@@ -28,23 +28,20 @@ class GeminiProvider(AIProvider):
 
     def generate_quotes(self, count: int) -> list[QuoteSchema]:
         prompt = f"""
-    You are an expert writer of original motivational and philosophical quotes.
+    You are an expert curator of famous quotes.
 
-    Generate exactly {count} original quotes.
+    Return exactly {count} authentic quotes.
 
     Requirements:
 
-    - You may include a mix of:
-    - Original quotes created by you.
-    - Well-known public quotes from real authors.
-    - If a quote is a real quote, provide the correct author's name.
-    - If a quote is original, set the author to "Unknown".
-    - Keep each quote between 8 and 25 words when possible.
-    - Make every quote meaningful, memorable, and emotionally impactful.
-    - Avoid repeating the same idea.
-    - Do not include numbering.
-    - Do not include explanations.
-    - Quotes should not be cliche.
+     - Include a diverse mix of motivational, inspirational, love, life, wisdom, philosophical, and success or failure quotes.
+     - Every quote must be an authentic quote from a real person.
+     - Always provide the correct author's name.
+     - Do not generate original or AI-written quotes.
+     - Avoid returning duplicate quotes.
+     - Do not include numbering.
+     - Do not include explanations.
+     - Return only valid JSON.
     """
 
         logger.info(
@@ -104,3 +101,27 @@ class GeminiProvider(AIProvider):
         )
 
         return quotes
+
+
+
+# orginal prompt 
+
+    #             prompt = f"""
+    # You are an expert writer of original motivational and philosophical quotes.
+
+    # Generate exactly {count} original quotes.
+
+    # Requirements:
+
+    # - You may include a mix of:
+    # - Original quotes created by you.
+    # - Well-known public quotes from real authors.
+    # - If a quote is a real quote, provide the correct author's name.
+    # - If a quote is original, set the author to "Unknown".
+    # - Keep each quote between 8 and 25 words when possible.
+    # - Make every quote meaningful, memorable, and emotionally impactful.
+    # - Avoid repeating the same idea.
+    # - Do not include numbering.
+    # - Do not include explanations.
+    # - Quotes should not be cliche.
+    # """
