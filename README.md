@@ -13,7 +13,7 @@ The app originally relied on a third-party quotes API. That was fine in the begi
 
 So I created this backend as a free alternative that I control.
 
-Instead of depending on a paid quotes provider, this project stores quotes in my own Supabase PostgreSQL database and uses Gemini AI to generate new quote content. A scheduled GitHub Actions workflow trigerrs the AI to create new quotes everyday. Generated quotes are validated, cleaned, checked for duplicates, and saved into the database.
+Instead of depending on a paid quotes provider, **this project stores quotes in my own Supabase PostgreSQL database and uses Gemini AI to generate new quote content. A scheduled GitHub Actions workflow trigerrs the AI to create new quotes everyday.** Generated quotes are validated, cleaned, checked for duplicates, and saved into the database.
 
 The goal is simple: provide a no-cost quotes API for my app, without depending on a paid third-party quote service.
 
