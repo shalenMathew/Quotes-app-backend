@@ -3,40 +3,7 @@
 <img width="960" height="720" alt="Adobe Express - Showreel-Grid-Mobile- remix" src="https://github.com/user-attachments/assets/12880b42-853f-48c2-acc9-b1a06fd210fa" />
 
 
-## Project Overview
-
-`A free and open-source quote platform that provides unlimited quotes through a public API, powered by AI and available for free, forever.`
-
-This project was created to solve a real problem for my [Quotes APP](https://github.com/shalenMathew/Quotes-app).
-
-The app originally relied on a third-party quotes API. That was fine in the beginning, but the API later changed significantly and moved important access behind a paywall. That made me realize that even relying on a third-party service for something as simple as quotes can become costly and risky over time.
-
-So I created this backend as a free alternative that I control.
-
-Instead of depending on a paid quotes provider, **this project stores quotes in my own Supabase PostgreSQL database and uses Gemini AI to generate new quote content. A scheduled GitHub Actions workflow trigerrs the AI to create new quotes everyday.** Generated quotes are validated, cleaned, checked for duplicates, and saved into the database.
-
-The goal is simple: provide a no-cost quotes API for my app, without depending on a paid third-party quote service.
-
-
-Completed core flow:
-
-```text
-Android app / API client
--> FastAPI backend
--> Supabase PostgreSQL
-```
-
-Completed AI flow:
-
-```text
-GitHub Actions / admin request
--> protected POST /api/generate
--> Gemini AI quote generation
--> validation and cleanup
--> duplicate checks
--> Supabase insert
--> public quote API
-```
+### A free, open-source quotes API that anyone can use.
 
 ## API Endpoints
 
@@ -88,6 +55,42 @@ Response shape:
     }
   ]
 }
+```
+
+
+## Project Overview
+
+`A free and open-source quote platform that provides unlimited quotes through a public API, powered by AI and available for free, forever.`
+
+This project was created to solve a real problem for my [Quotes APP](https://github.com/shalenMathew/Quotes-app).
+
+The app originally relied on a third-party quotes API. That was fine in the beginning, but the API later changed significantly and moved important access behind a paywall. That made me realize that even relying on a third-party service for something as simple as quotes can become costly and risky over time.
+
+So I created this backend as a free alternative that I control.
+
+Instead of depending on a paid quotes provider, **this project stores quotes in my own Supabase PostgreSQL database and uses Gemini AI to generate new quote content. A scheduled GitHub Actions workflow trigerrs the AI to create new quotes everyday.** Generated quotes are validated, cleaned, checked for duplicates, and saved into the database.
+
+The goal is simple: provide a no-cost quotes API for my app, without depending on a paid third-party quote service.
+
+
+Completed core flow:
+
+```text
+Android app / API client
+-> FastAPI backend
+-> Supabase PostgreSQL
+```
+
+Completed AI flow:
+
+```text
+GitHub Actions / admin request
+-> protected POST /api/generate
+-> Gemini AI quote generation
+-> validation and cleanup
+-> duplicate checks
+-> Supabase insert
+-> public quote API
 ```
 
 ## What This Project Does
